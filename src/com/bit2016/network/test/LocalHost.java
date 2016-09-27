@@ -8,6 +8,7 @@ public class LocalHost {
 	public static void main(String[] args) {
 		try {
 			InetAddress inetAddress = InetAddress.getLocalHost();
+			//it 주소정보가 들어있음.  local-나자신 호스트, remote-나랑 통신하고 있는 호스트  / 호스트는 장비 
 			String hostName = inetAddress.getHostName();
 			String hostAddress = inetAddress.getHostAddress();
 			

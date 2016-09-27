@@ -15,7 +15,7 @@ public class NSLookup {
 				System.out.print(">");
 				String inputValue = scan.nextLine();
 				if (inputValue.equals("exit") == true) {
-					System.out.println("[server] closed by client");
+					
 					 break;
 				}
 				InetAddress[] inetaddresses = InetAddress.getAllByName(inputValue);

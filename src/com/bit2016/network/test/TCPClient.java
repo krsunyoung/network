@@ -43,6 +43,7 @@ public class TCPClient {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
+			
 //			try {
 //				if (socket != null & socket.isClosed() == false) {
 //					socket.close();
@@ -52,6 +53,7 @@ public class TCPClient {
 //			}
 			//jvm이 소켓 안닫혀 있는것을 자동으로 닫혀줄수도 있지만 소켓 오류남
 			//아니면 서버에 catch 하나를 추가
+			
 		}
 	}
 

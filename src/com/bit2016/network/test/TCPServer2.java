@@ -31,6 +31,7 @@ public class TCPServer2 {
 
 			// 3.accept(클라이언트로부터 연결요청을 기다린다.)
 			Socket socket = serverSocket.accept(); // block 된다.
+		
 			// 연결한 다음 클라이언트 주소를 알고 싶을때 !
 			InetSocketAddress inetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
 			// InetAddress inetRemoteHostAddress=
@@ -51,7 +52,6 @@ public class TCPServer2 {
 				PrintWriter pw = 
 					new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"),true);
 				//네트워크에서 소스에서 읽어들여오는것. 
-				//true 를 쓰는 이유는 ....?
 				
 				while (true) { //무한루프 종료할때까지 계속 읽고 쓰고 반복
 					// 5. 데이터 읽기

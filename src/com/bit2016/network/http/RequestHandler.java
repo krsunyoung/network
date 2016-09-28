@@ -3,6 +3,7 @@ package com.bit2016.network.http;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -26,10 +27,13 @@ public class RequestHandler extends Thread {
 
 			// get IOStream
 			OutputStream outputStream = socket.getOutputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-
+			
+			InputStream inputstream = socket.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+			
+			
 			String request = null;
-			while (true) {
+			while (true) {//-------------------------------------------------//
 				String line = br.readLine(); // br을 한라인씩 읽어준다.
 				
 				// 브라우저가 연결을 끊으면
@@ -44,19 +48,20 @@ public class RequestHandler extends Thread {
 				}
 
 				if (request == null) {
-					request = line;
+					request = line; //첫줄을 출력할수 있도록 넣어준것 원래는 안넣는다.
 				}
 			}
 			
 			consoleLog(request);
 
 			String[] tokens = request.split(" ");
-			if ("GET".equals(tokens[0]) == true) { 
+			if ("GET".equals(tokens[0]) == true) {  //첫번째는 명령어. 나머지는 잘못된 요청이다. bad request로 .... 
 				reponseStaticResource(outputStream, tokens[1], tokens[2]);
-				// Static 정적인 리소스들이라 계속 index.html파일만 보내줌?
-
+				// Static 정적인 리소스들이라  url 요청한 파일을 보내준다.(계속 index.html파일만 보내)
+				// 정적인 파일데이터를 보내준다? program 동적인 리소스라 한다.
+				
 			} else { //POST, DELETE, PUT, Etc 명령들은 400 Bad Request
-				// respones400Error( outputStream, tokens[1]);
+				// respones400Error( outputStream, tokens[2]);
 			}
 			
 			// 예제 응답입니다.
@@ -85,12 +90,14 @@ public class RequestHandler extends Thread {
 
 	public void reponseStaticResource(
 		OutputStream outputStream, String url, String protocol) 
-		throws IOException {
+				throws IOException { 
+		// readallbytes 에 try catch 를 해줘야 하는데 throws IOException 을 써주면서
+		// IOException을 무시하겠다고 해주면 try catch 를 무시하게끔 해준다. 안써도 된다!!
+		
 		System.out.println(url + ":" + protocol);
-		// 응답하게끔 입력해줘야함...
-
+		
 		if("/".equals( url ) == true ) {
-			//welcome(default) file
+			//welcome(default) file  사이트에 들어왔을때 바뀌게 해주는것. default.html/ jsp ....등등
 			url = "/index.html";
 		}
 		
@@ -103,23 +110,26 @@ public class RequestHandler extends Thread {
 
 		// nio
 		byte[] body = Files.readAllBytes(file.toPath());
-		String contentType = Files.probeContentType( file.toPath());
-		//
+		String contentType = Files.probeContentType( file.toPath()); //파일에 컨텐츠 타입을 리턴해 준다  
+		
 
 		// 응답(response)
 		 outputStream.write( (protocol + " 200 OK\r\n").getBytes( "UTF-8" )) ; //응답해더의 첫줄, 왜 이렇게 하냐고 묻지말것
-		 outputStream.write( ("Content-Type:" + contentType + "; charset=utf-8\r\n").getBytes( "UTF-8" ) ); //콘텐츠타입 지정
-		 outputStream.write( "\r\n".getBytes() ); //개행해주면 브라우저에 빈 개행이 생기고 헤더의 마지막줄임
-		 outputStream.write( body );
+		 //\r은 캐리지 리턴으로 그 줄의 맨앞으로 가라는 의미
+		 outputStream.write( ("Content-Type:" + contentType + "; charset=utf-8\r\n").getBytes( "UTF-8" ) ); //콘텐츠타입 지정  이미지거나 CSS파일이면 그것에 맞게 bytes 타입을 바꿔준다.
+		 outputStream.write( "\r\n".getBytes() ); //개행해주면 브라우저에 빈 개행이 있으면 헤더의 마지막줄임 
+		 outputStream.write( body ); 
+		 //안적어도 되는 이유가 .....  html이 정해져있어서 어디에 정해져 있느냐... 그것이 문제로다...
+		 
 	}
 
 	public void response404Error (
 			OutputStream outputStream, String protocol)
 			throws IOException{
 			// HTTP/1.1 404 File Not Found
-			// Content=TYPE : text/html; charest=uft-8
+			// Content=TYPE : text/html; charset=uft-8
 			// 이렇게 적어주면 html파일만 가져온다?
-			// html(./webapp/error/404.html)
+//			 html(./webapp/error/404.html)
 			System.out.println("404 error 응답할것  [과제]");
 	}
 	
@@ -127,8 +137,7 @@ public class RequestHandler extends Thread {
 			OutputStream outputStream, String protocol)
 			throws IOException{
 			// HTTP/1.1 400 Bad Request
-			// Content=TYPE : text/html; charest=uft-8
-			// 이렇게 적어주면 html파일만 가져온다?
+			// Content=TYPE : text/html; charset=uft-8
 			// html(./webapp/error/400.html)
 			System.out.println("400 error 응답할것  [과제]");
 	}

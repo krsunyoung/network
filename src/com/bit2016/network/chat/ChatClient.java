@@ -1,4 +1,4 @@
-package com.bit2016.network.echo;
+package com.bit2016.network.chat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,51 +10,45 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Scanner;
 
-public class EchoClient02 {
+public class ChatClient {
 	private static final String SERVER_IP = "192.168.1.21";
-	private static final int SERVER_PORT = 8088;
+	private static final int SERVER_PORT = 9090;
 
 	public static void main(String[] args) {
 		Scanner scanner = null;
 		Socket socket = null;
 
 		try {
-			// 1. Scanner 생성(표준입력 연결)
 			scanner = new Scanner(System.in);
-
-			// 2. Socket 생성
 			socket = new Socket();
-
-			// 3. connect to server
 			socket.connect(new InetSocketAddress(SERVER_IP, SERVER_PORT));
 
-			// 4. IOStream 생성(받아오기)
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
-
-			while (true) {
 			
-				System.out.print(">>");
-				String line = scanner.nextLine();
-				
-				
+			System.out.print("JOIN:");
+			String line = "JOIN: "+scanner.nextLine();
+			pw.println(line);
+			String data = br.readLine();
+			
+			Thread thread = new ChatClientThread();
+			thread.start();
+			
+			while(true){
+				line = scanner.nextLine();
 				if ("quit".equals(line)) {
 					break;
 				}
-
-				// 6. 송신
 				pw.println(line);
-
-				// 7. 수신
-				String data = br.readLine();
+				data = br.readLine();
 				if (data == null) {
 					log("closed by server");
 					break;
 				}
 
-				// 8. 출력
-				System.out.println("<<" + data);
+				System.out.println( data);
 			}
+			
 		} catch (SocketException ex) {
 			log("abnormal closed by client");
 		} catch (IOException ex) {

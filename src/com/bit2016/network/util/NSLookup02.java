@@ -1,10 +1,10 @@
-package com.bit2016.network.echo;
+package com.bit2016.network.util;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Scanner;
 
-public class NSLookup {
+public class NSLookup02 {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);

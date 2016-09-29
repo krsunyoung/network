@@ -41,6 +41,7 @@ public class ChatServerThread extends Thread {
 		
 			while (true) {
 				String line = br.readLine();
+				ChatServer.consoleLog(line);
 				if (line == null) {
 					// doQuit();
 					break;
@@ -48,12 +49,13 @@ public class ChatServerThread extends Thread {
 				String[] tokens = line.split(":");
 				if ("JOIN".equalsIgnoreCase(tokens[0])) {
 					doJoin(tokens[1], pw); // name 을 넘겨받는것.
-				}  else if ("QUIT".equalsIgnoreCase(tokens[0])) {
+				}  else if ("QUIT".equalsIgnoreCase(line)) {
 					doQuit(pw);
+					break;
 				} else {
 					doMessage(name +">>"+line);
 				}
-
+				
 			}
 
 		} catch (UnsupportedEncodingException e) {
@@ -80,10 +82,11 @@ public class ChatServerThread extends Thread {
 		// 2.broadcasting
 		String message = name + "님이 입장하였습니다.";
 
-		broadcastMessage(message);
-
 		// 3.printWriter을 저장시킨다 (공유하고 있는)
 		addPrintWriter(printWriter);
+
+		broadcastMessage(message);
+
 
 		// 4.ack
 		printWriter.println("JOIN:OK");
@@ -98,12 +101,13 @@ public class ChatServerThread extends Thread {
 	private void doQuit(PrintWriter printWriter) {
 
 		// 2.broadcasting
+		//ChatServer.consoleLog("ddd"); doquit메소드에 들어갔는지 출력확인 
 		String message = name + "님이 퇴장하였습니다.";
+		deletePrintWriter(printWriter);
 		broadcastMessage(message);
 
-		deletePrintWriter(printWriter);
 
-		printWriter.println("QUIT:getout");
+	//	printWriter.println("QUIT:getout");
 	}
 
 	private void addPrintWriter(PrintWriter printWriter) {

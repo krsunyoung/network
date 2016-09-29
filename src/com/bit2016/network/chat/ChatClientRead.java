@@ -6,8 +6,12 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
-public class ChatClientThread extends Thread {
+public class ChatClientRead extends Thread {
 	private Socket socket;
+
+	public ChatClientRead(Socket socket) {
+		this.socket = socket;
+	}
 
 	@Override
 	public void run() {
@@ -15,17 +19,26 @@ public class ChatClientThread extends Thread {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			while (true) {
 				String data = br.readLine();
-				
-				if (data == null) {
+				System.out.println(data);
+				if (data == null ) {
 					break;
 				}
-				System.out.println(data);
+
 			}
 
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		try {
+
+			if (socket != null && socket.isClosed() == false) {
+
+				socket.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 

@@ -10,11 +10,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Scanner;
 
-public class ChatClient {
+public class ChatClient  {
 	private static final String SERVER_IP = "192.168.0.16";
 	private static final int SERVER_PORT = 9090;
 
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 		Scanner scanner = null;
 		Socket socket = null;
 
@@ -29,26 +29,29 @@ public class ChatClient {
 			System.out.print("JOIN:");
 			String line = "JOIN:"+scanner.nextLine();
 			pw.println(line);
+			
 			String join = br.readLine();
 			System.out.println(join);
-			
-		
-			Thread thread = new ChatClientThread();
+	
+			Thread thread = new ChatClientRead(socket);
 			thread.start();
-
+			
 			while(true){
 				String memo = scanner.nextLine();
+				pw.println(memo);
 				if ("quit".equals(memo)) {
 					break;
-				}
-				pw.println(line);
-				String data = br.readLine();
-				if (data == null) {
-					log("closed by server");
-					break;
-				}
+				} 
+				//클라이언트가 먼저 나가서 SeverThread에 있는 quit가 실행되지 않는다.
+				
+				//String data = br.readLine();
+//				if (data == null) {
+//					log("closed by server");
+//					break;
+//				}
 
 			}
+			
 			
 		} catch (SocketException ex) {
 			log("abnormal closed by client");
@@ -60,6 +63,7 @@ public class ChatClient {
 					scanner.close();
 				}
 				if (socket != null && socket.isClosed() == false) {
+					
 					socket.close();
 				}
 			} catch (IOException ex) {

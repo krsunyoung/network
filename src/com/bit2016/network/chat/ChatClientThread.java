@@ -14,11 +14,12 @@ public class ChatClientThread extends Thread {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			while (true) {
-				String message = br.readLine();
-				if (message == null) {
+				String data = br.readLine();
+				
+				if (data == null) {
 					break;
 				}
-				System.out.println(message);
+				System.out.println(data);
 			}
 
 		} catch (UnsupportedEncodingException e) {

@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.util.Scanner;
 
 public class ChatClient {
-	private static final String SERVER_IP = "192.168.1.21";
+	private static final String SERVER_IP = "192.168.0.16";
 	private static final int SERVER_PORT = 9090;
 
 	public static void main(String[] args) {
@@ -27,26 +27,27 @@ public class ChatClient {
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
 			
 			System.out.print("JOIN:");
-			String line = "JOIN: "+scanner.nextLine();
+			String line = "JOIN:"+scanner.nextLine();
 			pw.println(line);
-			String data = br.readLine();
+			String join = br.readLine();
+			System.out.println(join);
 			
+		
 			Thread thread = new ChatClientThread();
 			thread.start();
-			
+
 			while(true){
-				line = scanner.nextLine();
-				if ("quit".equals(line)) {
+				String memo = scanner.nextLine();
+				if ("quit".equals(memo)) {
 					break;
 				}
 				pw.println(line);
-				data = br.readLine();
+				String data = br.readLine();
 				if (data == null) {
 					log("closed by server");
 					break;
 				}
 
-				System.out.println( data);
 			}
 			
 		} catch (SocketException ex) {

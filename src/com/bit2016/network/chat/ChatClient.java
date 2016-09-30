@@ -73,6 +73,6 @@ public class ChatClient  {
 	}
 
 	private static void log(String message) {
-		System.out.println("[Echo Client]" + message);
+		System.out.println(message);
 	}
 }

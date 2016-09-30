@@ -48,6 +48,6 @@ public class ChatServer {
 		}
 	}
 	public static void consoleLog(String message){
-		System.out.println("[chat server]"+ message );
+		System.out.println( message );
 	}
 }

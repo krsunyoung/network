@@ -22,6 +22,9 @@ public class ChatServer {
 			//1.create server socket
 			serverSocket = new ServerSocket();
 			
+			//1-1 set option SO_ReUSEADDR(종료후빨리 바인딩을 하기 위해서)
+			serverSocket.setReuseAddress(true); //binding할때 에러남 ? 왜 ? 서버를 먼저 끈경우에 ?
+			
 			//2. binding
 			String localhost = InetAddress.getLocalHost().getHostAddress();
 			serverSocket.bind(new InetSocketAddress(localhost, PORT),5); //list의 크기 기본이 5인데 바꿀수 있다. 

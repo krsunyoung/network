@@ -5,10 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class TCPClient {
 
-	private static final String SERVER_IP = "192.168.1.25";
+	private static final String SERVER_IP = "192.168.1.21";
 	private static final int SERVER_PORT = 5020;
 
 	public static void main(String[] args) {
@@ -17,6 +18,26 @@ public class TCPClient {
 			// 1.소켓 생성 클라이언트라 서버소켓이 필요없음
 			socket = new Socket();
 
+			//1-1 . socket Buffer size 확인
+			int receiveBufferSize = socket.getReceiveBufferSize();
+			int sendBufferSize = socket.getSendBufferSize();
+			System.out.println( receiveBufferSize+","+ sendBufferSize);
+			
+			//1-2 socket buffer size 변경
+			socket.setReceiveBufferSize(10 * 1024);
+			socket.setSendBufferSize(10*1024);
+			receiveBufferSize = socket.getReceiveBufferSize();
+			sendBufferSize = socket.getSendBufferSize();
+			
+			System.out.println( receiveBufferSize+","+ sendBufferSize);
+			
+			
+			//1-3 SO_NODELAY(Nagle Algorithm off)
+			socket.setTcpNoDelay(true);//ack를 받기때문에 생기는데 이제 받지 않고 그냥 send만 !!!!!
+			
+			//1-4 SO_TIMEOUT
+			socket.setSoTimeout(1); //바로 에러남  nodelay때문에 에러가 나지 않지만 지워지면 에러남.
+			
 			// 2. 서버 연결
 			socket.connect(new InetSocketAddress(SERVER_IP, SERVER_PORT));
 			System.out.println("[Client] connected ");
@@ -40,6 +61,8 @@ public class TCPClient {
 			data = new String(buffer, 0, readByteCount,"UTF-8");
 			System.out.println("[Client] received : "+data);
 			
+		} catch (SocketTimeoutException ex ){
+			System.out.println("time out:");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
